@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jérôme Lopes - Assistance Informatique</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #fff;
+            background: #0a0e27;
+            overflow-x: hidden;
+        }
+
+        .morphing-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(120, 0, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 150, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(255, 0, 150, 0.15) 0%, transparent 50%);
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .emoji-particle {
+            position: fixed;
+            font-size: 2.5rem;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            animation: floatParticle 20s linear infinite;
+            transition: transform 0.3s ease-out;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(110vh) rotate(0deg) translateX(0);
+                opacity: 0;
+            }
+            5% {
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) translateX(100px);
+                opacity: 0.8;
+            }
+            95% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg) translateX(-50px);
+                opacity: 0;
+            }
+        }
+
+        header {
+            background: rgba(10, 14, 39, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff006e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(30deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #00d4ff;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            min-height: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 150px 2rem 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            border: 4px solid transparent;
+            background: linear-gradient(#0a0e27, #0a0e27) padding-box,
+                        linear-gradient(135deg, #00d4ff, #7b2ff7, #ff006e) border-box;
+            box-shadow: 0 10px 40px rgba(123, 47, 247, 0.5);
+            animation: photoGlow 3s ease-in-out infinite;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        @keyframes photoGlow {
+            0%, 100% {
+                box-shadow: 0 10px 40px rgba(123, 47, 247, 0.5);
+            }
+            50% {
+                box-shadow: 0 10px 60px rgba(0, 212, 255, 0.7);
+            }
+        }
+
+        .glitch {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff006e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+            position: relative;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .contact-info {
+            margin-top: 2rem;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .contact-info a {
+            color: #00d4ff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .contact-info a:hover {
+            color: #7b2ff7;
+        }
+
+        .contact-info p {
+            margin: 0.5rem 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+            animation: fadeInUp 1s ease 0.4s both;
+            box-shadow: 0 10px 40px rgba(123, 47, 247, 0.4);
+            margin-top: 2rem;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -50%; }
+            100% { left: 150%; }
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 50px rgba(123, 47, 247, 0.6);
+        }
+
+        section {
+            padding: 30px 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        h2 {
+            font-size: 3rem;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(123, 47, 247, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .service-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: rgba(123, 47, 247, 0.5);
+            box-shadow: 0 20px 60px rgba(123, 47, 247, 0.3);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px rgba(123, 47, 247, 0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .service-card h3 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .service-card p, .service-card ul {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+        }
+
+        .service-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .service-card ul li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .service-card ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #00d4ff;
+        }
+
+        .testimonials {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 50px 2rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .testimonial-author {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .experience {
+            background: linear-gradient(135deg, rgba(123, 47, 247, 0.1), rgba(0, 212, 255, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .experience::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: slide 3s infinite;
+        }
+
+        @keyframes slide {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .experience h3 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .companies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .company {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s;
+            text-align: center;
+        }
+
+        .company:hover {
+            transform: scale(1.05);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .company h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #00d4ff;
+        }
+
+        .zone {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin: 4rem 0;
+            background: rgba(255, 0, 110, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 0, 110, 0.2);
+        }
+
+        .zone h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ff006e, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-form {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            padding: 4rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: white;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #7b2ff7;
+            box-shadow: 0 0 20px rgba(123, 47, 247, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.3rem 2rem;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(123, 47, 247, 0.5);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        footer {
+            background: rgba(10, 14, 39, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            padding: 3rem;
+            margin-top: 5rem;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0.5rem 0;
+        }
+
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            padding: 1.5rem 2rem;
+            background: rgba(0, 212, 255, 0.2);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            animation: slideIn 0.5s ease;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .glitch {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .profile-photo {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="morphCanvas"></canvas>
+    <div class="morphing-bg"></div>
+
+    <header>
+        <nav>
+            <div class="logo">⚡ JL Tech</div>
+            <ul class="nav-links">
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#avis">Avis</a></li>
+                <li><a href="#experience">Expérience</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="accueil" class="hero">
+        <div class="hero-content">
+            <div class="profile-photo">
+                <img src="https://i.imgur.com/placeholder.jpg" alt="Jérôme Lopes">
+            </div>
+            <h1 class="glitch">Assistance Informatique</h1>
+            <p>Jérôme Lopes - 10 ans d'expertise au service des particuliers en Bourgogne-Franche-Comté</p>
+            <div class="contact-info">
+                <p>📞 <a href="tel:0667036661">06 67 03 66 61</a></p>
+                <p>📧 <a href="mailto:lopes.jerome21@gmail.com">lopes.jerome21@gmail.com</a></p>
+                <p>📍 7 rue Joseph Cugnot, 21800 Sennecey-lès-Dijon</p>
+            </div>
+            <a href="#contact" class="btn">Me Contacter</a>
+        </div>
+    </section>
+
+    <section id="services">
+        <h2>Mes Prestations</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🔧</div>
+                <h3>Réparation & Maintenance</h3>
+                <ul>
+                    <li>Réinstallation complète du système</li>
+                    <li>Nettoyage complet (virus et matériel)</li>
+                    <li>Forfait remplacement de pièces</li>
+                    <li>Forfait récupération de données</li>
+                </ul>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-icon">💻</div>
+                <h3>Installation & Configuration</h3>
+                <ul>
+                    <li>Mise en service PC neuf sans transfert</li>
+                    <li>Mise en service PC neuf avec transfert</li>
+                    <li>Livraison et installation à domicile</li>
+                    <li>Configuration complète</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🛠️</div>
+                <h3>Montage PC Sur-Mesure</h3>
+                <p>Conception et assemblage de votre PC personnalisé selon vos besoins et votre budget. Forfait complet avec sélection des composants et optimisation.</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🔒</div>
+                <h3>Cybersécurité</h3>
+                <p>Protection avancée contre les menaces numériques, installation d'antivirus, sécurisation complète de vos données personnelles.</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🎓</div>
+                <h3>Formations Personnalisées</h3>
+                <p>Accompagnement sur-mesure pour maîtriser les outils numériques, Internet, messagerie et applications. Tarif sur devis selon vos besoins.</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🌐</div>
+                <h3>Création de Site Web</h3>
+                <p>Conception de sites internet professionnels adaptés à vos besoins. Design moderne, responsive et optimisé. Devis personnalisé.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="avis" class="testimonials">
+        <h2>Avis Clients</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Intervention rapide et efficace ! Jérôme a résolu mon problème de virus en moins d'une heure. Très professionnel et pédagogue."</p>
+                <p class="testimonial-author">- Marie D., Dijon</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"J'ai fait monter un PC gaming sur-mesure. Le résultat est parfait, exactement ce que je voulais. Prix très correct et conseils au top !"</p>
+                <p class="testimonial-author">- Thomas L., Chenôve</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Formation très claire pour mes parents qui débutaient en informatique. Jérôme est patient et s'adapte au rythme de chacun."</p>
+                <p class="testimonial-author">- Sophie M., Sennecey-lès-Dijon</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Récupération de toutes mes photos que je croyais perdues après une panne de disque dur. Un grand merci pour votre expertise !"</p>
+                <p class="testimonial-author">- Jean-Pierre R., Longvic</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Installation de mon nouveau PC avec transfert de toutes mes données. Service impeccable, je recommande vivement !"</p>
+                <p class="testimonial-author">- Christine B., Quetigny</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Mon PC était devenu très lent, après son intervention il fonctionne comme neuf. Rapport qualité/prix excellent."</p>
+                <p class="testimonial-author">- Patrick V., Fontaine-lès-Dijon</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Site web créé pour mon commerce, design moderne et exactement ce que je voulais. Très réactif et à l'écoute de mes besoins."</p>
+                <p class="testimonial-author">- Alexandre P., Beaune</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <p class="testimonial-text">"Dépannage le dimanche pour un problème urgent. Jérôme s'est déplacé rapidement et a tout réglé. Service au top !"</p>
+                <p class="testimonial-author">- Nathalie F., Talant</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2>Mon Parcours</h2>
+        <div class="experience">
+            <h3>✨ 10 ans d'expérience professionnelle</h3>
+            <div class="companies">
+                <div class="company">
+                    <h4>🏦 Secteur Bancaire</h4>
+                    <p>Banque Populaire & Caisse d'Épargne</p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Infrastructure IT & Sécurité</p>
+                </div>
+                <div class="company">
+                    <h4>🛍️ Commerce de Détail</h4>
+                    <p>3 ans auprès des commerçants</p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Vêtements, Maroquinerie, Fripperie</p>
+                    <p style="color: #ff006e; font-weight: 600;">Plus de 1000 clients accompagnés</p>
+                </div>
+                <div class="company">
+                    <h4>📋 URSSAF Bourgogne</h4>
+                    <p>Administration Systèmes</p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Gestion infrastructure critique</p>
+                </div>
+            </div>
+        </div>
+        <div class="zone">
+            <h3>🗺️ Zone d'Intervention</h3>
+            <p style="font-size: 1.3rem; margin-top: 1rem; color: rgba(255, 255, 255, 0.8);">
+                Intervention sur toute la région <strong style="color: #ff006e;">Bourgogne-Franche-Comté</strong><br>
+                <span style="font-size: 1.1rem; margin-top: 0.5rem; display: inline-block;">
+                    📍 France métropolitaine sous contrat possible
+                </span>
+            </p>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contactez-moi</h2>
+        <div class="contact-form">
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Nom et Prénom *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Téléphone</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="message">Votre Demande *</label>
+                    <textarea id="message" name="message" required placeholder="Décrivez votre projet..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Envoyer</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p style="font-size: 1.1rem; font-weight: 600;">⚡ Jérôme Lopes - Tech Expert</p>
+        <p>Assistance Informatique Bourgogne-Franche-Comté</p>
+        <p>📞 06 67 03 66 61 | 📧 lopes.jerome21@gmail.com</p>
+        <p>&copy; 2025 - Intervention à domicile pour particuliers</p>
+    </footer>
+
+    <script>
+        // Navigation fluide
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Notification system
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.5s ease reverse';
+                setTimeout(() => notification.remove(), 500);
+            }, 4000);
+        }
+
+        // Formulaire avec envoi d'email
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Préparation...';
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Construction du lien mailto
+            const subject = encodeURIComponent('Demande de contact - ' + formData.name);
+            const body = encodeURIComponent(
+                'Nom: ' + formData.name + '\n' +
+                'Email: ' + formData.email + '\n' +
+                'Téléphone: ' + (formData.phone || 'Non renseigné') + '\n\n' +
+                'Message:\n' + formData.message
+            );
+            
+            const mailtoLink = 'mailto:lopes.jerome21@gmail.com?subject=' + subject + '&body=' + body;
+            
+            // Ouvrir le client email
+            window.location.href = mailtoLink;
+            
+            // Reset form et notification après ouverture du client email
+            setTimeout(() => {
+                this.reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                showNotification('✅ Message envoyé avec succès ! Merci pour votre demande, je vous recontacterai très rapidement.');
+            }, 1500);
+        });
+
+        // Emoji particles animation avec interaction souris
+        const emojis = ['💻', '🖥️', '⌨️', '🖱️', '📱', '💾', '🔌', '⚡', '🖨️', '📲', '💿', '🔧', '⚙️', '🌐', '📡', '💡', '🔋', '📟'];
+        const particles = [];
+        
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'emoji-particle';
+            particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
+            document.body.appendChild(particle);
+            
+            particles.push({
+                element: particle,
+                x: parseFloat(particle.style.left),
+                y: 100,
+                offsetX: 0,
+                offsetY: 0
+            });
+            
+            setTimeout(() => {
+                particle.remove();
+                const index = particles.findIndex(p => p.element === particle);
+                if (index > -1) particles.splice(index, 1);
+            }, 25000);
+        }
+
+        // Interaction avec la souris
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            particles.forEach(particle => {
+                const rect = particle.element.getBoundingClientRect();
+                const particleX = rect.left + rect.width / 2;
+                const particleY = rect.top + rect.height / 2;
+
+                const distance = Math.sqrt(
+                    Math.pow(mouseX - particleX, 2) + 
+                    Math.pow(mouseY - particleY, 2)
+                );
+
+                const repelDistance = 150;
+
+                if (distance < repelDistance) {
+                    const angle = Math.atan2(particleY - mouseY, particleX - mouseX);
+                    const force = (repelDistance - distance) / repelDistance;
+                    const pushX = Math.cos(angle) * force * 50;
+                    const pushY = Math.sin(angle) * force * 50;
+
+                    particle.offsetX = pushX;
+                    particle.offsetY = pushY;
+
+                    particle.element.style.transform = `translate(${pushX}px, ${pushY}px)`;
+                } else {
+                    particle.offsetX *= 0.95;
+                    particle.offsetY *= 0.95;
+                    
+                    if (Math.abs(particle.offsetX) < 0.5 && Math.abs(particle.offsetY) < 0.5) {
+                        particle.element.style.transform = '';
+                    } else {
+                        particle.element.style.transform = `translate(${particle.offsetX}px, ${particle.offsetY}px)`;
+                    }
+                }
+            });
+        });
+
+        // Créer des particules régulièrement
+        setInterval(createParticle, 1500);
+        for (let i = 0; i < 12; i++) {
+            setTimeout(createParticle, i * 300);
+        }
+
+        // Animation Canvas - Formes polymorphes
+        const canvas = document.getElementById('morphCanvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        class MorphShape {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.radius = Math.random() * 150 + 100;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.color = `hsla(${Math.random() * 360}, 70%, 60%, 0.1)`;
+                this.points = [];
+                this.numPoints = 8;
+                for (let i = 0; i < this.numPoints; i++) {
+                    this.points.push({
+                        angle: (Math.PI * 2 * i) / this.numPoints,
+                        offset: Math.random() * 50,
+                        speed: (Math.random() - 0.5) * 0.02
+                    });
+                }
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < -this.radius || this.x > width + this.radius) this.vx *= -1;
+                if (this.y < -this.radius || this.y > height + this.radius) this.vy *= -1;
+
+                this.points.forEach(point => {
+                    point.angle += point.speed;
+                    point.offset = Math.sin(point.angle) * 50;
+                });
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.beginPath();
+
+                for (let i = 0; i < this.numPoints; i++) {
+                    const angle = (Math.PI * 2 * i) / this.numPoints;
+                    const r = this.radius + this.points[i].offset;
+                    const x = Math.cos(angle) * r;
+                    const y = Math.sin(angle) * r;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+
+                ctx.closePath();
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const shapes = [];
+        for (let i = 0; i < 5; i++) {
+            shapes.push(new MorphShape());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            shapes.forEach(shape => {
+                shape.update();
+                shape.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
