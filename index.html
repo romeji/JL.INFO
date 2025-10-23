@@ -1014,8 +1014,12 @@
         <p>📞 06 67 03 66 61 | 📧 lopes.jerome21@gmail.com</p>
         <p>&copy; 2025 - Intervention à domicile pour particuliers</p>
     </footer>
-
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
+        (function(){
+        emailjs.init("CYp7N-IF4P4kOd2iL"); // 🔑 Remplace par ta clé publique EmailJS
+        })();
+        
         // Menu burger pour mobile
         const menuToggle = document.getElementById('menuToggle');
         const navLinks = document.getElementById('navLinks');
@@ -1067,43 +1071,39 @@
         }
 
         // Formulaire avec envoi d'email
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const submitBtn = this.querySelector('.submit-btn');
-            const originalText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Préparation...';
-            
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                message: document.getElementById('message').value
-            };
-            
-            // Construction du lien mailto
-            const subject = encodeURIComponent('Demande de contact - ' + formData.name);
-            const body = encodeURIComponent(
-                'Nom: ' + formData.name + '\n' +
-                'Email: ' + formData.email + '\n' +
-                'Téléphone: ' + (formData.phone || 'Non renseigné') + '\n\n' +
-                'Message:\n' + formData.message
-            );
-            
-            const mailtoLink = 'mailto:lopes.jerome21@gmail.com?subject=' + subject + '&body=' + body;
-            
-            // Ouvrir le client email
-            window.location.href = mailtoLink;
-            
-            // Reset form et notification après ouverture du client email
-            setTimeout(() => {
-                this.reset();
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
-                showNotification('✅ Message envoyé avec succès ! Merci pour votre demande, je vous recontacterai très rapidement.');
-            }, 1500);
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Envoi en cours...';
+
+        emailjs.send("TON_SERVICE_ID", "TON_TEMPLATE_ID", {
+            from_name: document.getElementById('name').value,
+            from_email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            message: document.getElementById('message').value
+        })
+        .then(function() {
+            showNotification("✅ Message envoyé avec succès !");
+            document.getElementById('contactForm').reset();
+        }, function(error) {
+            showNotification("❌ Échec de l’envoi. Réessayez plus tard.");
+            console.error('Erreur:', error);
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Envoyer';
         });
+    });
+
+    function showNotification(message) {
+        const notif = document.createElement('div');
+        notif.className = 'notification';
+        notif.textContent = message;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 4000);
+    }
 
         // Emoji particles animation avec interaction souris
         const emojis = ['💻', '🖥️', '⌨️', '🖱️', '📱', '💾', '🔌', '⚡', '🖨️', '📲', '💿', '🔧', '⚙️', '🌐', '📡', '💡', '🔋', '📟'];
