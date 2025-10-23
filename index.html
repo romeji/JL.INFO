@@ -877,6 +877,33 @@
             h2 {
                 font-size: 2rem;
             }
+            
+            .menu-toggle {
+                display: block;
+                background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(123, 47, 247, 0.2));
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(0, 212, 255, 0.4);
+                color: #00d4ff;
+                font-size: 1.8rem;
+                cursor: pointer;
+                z-index: 1001;
+                width: 50px;
+                height: 50px;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+            }
+
+            .menu-toggle:hover {
+                background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(123, 47, 247, 0.3));
+                border-color: rgba(0, 212, 255, 0.6);
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+            }
+
+            .menu-toggle:active {
+                transform: scale(0.95);
+            }
 
             .menu-toggle {
                 display: block;
