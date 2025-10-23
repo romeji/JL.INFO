@@ -908,17 +908,6 @@
             .menu-toggle {
                 display: block;
             }
-            
-            /* Par défaut : visible (mobile) */
-            #menuToggle {
-              display: block;
-            }
-            
-            @media (min-width: 768px) {
-                  #menuToggle {
-                    display: none;
-                  }
-            }
 
             nav {
                 padding: 0.8rem 1.5rem;
@@ -1040,6 +1029,17 @@
                 font-size: 1.5rem;
             }
         }
+
+            #menuToggle {
+                display: block;
+            }
+
+            /* Cacher sur PC */
+            @media (min-width: 768px) {
+                  #menuToggle {
+                    display: none;
+                  }
+            }
     </style>
 </head>
 <body>
